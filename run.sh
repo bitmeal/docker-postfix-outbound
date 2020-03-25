@@ -58,8 +58,8 @@ postfix start
 echo "started postfix"
 echo "mirroring /var/log/mail.log to stdout and /var/log/mail.err to stderr"
 
-tail -f /var/log/mail.log &
-tail -f /var/log/mail.err 1>&2 &
+tail -F /var/log/mail.log &
+tail -F /var/log/mail.err 1>&2 &
 
 trap : TERM INT; sleep infinity & wait
 # fallback
