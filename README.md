@@ -5,10 +5,11 @@ Simple docker container to use postfix for outbound mail sending. Intended for a
 
 ## config
 arguments for building:
-* `DOMAIN` set you domain while building
+* `DOMAIN` set your domain while building
 
 use following envvars when starting with `--env / -e`:
 * `SMTP_PORT`: defaults to 35
+* `ALLOW_SUBNET`: subnet in CIDR notation, to accept mails from. will default to the /24 subnet of the containers ip if not given
 * `MAIL_DOMAIN`: defaults to domain set while building container (if set and valid)
 * `MAIL_HOSTNAME`: optional, will be set to `MAIL_DOMAIN` if missing
 
