@@ -12,6 +12,9 @@ RUN	wget https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement
     chmod +x /usr/local/bin/systemctl && \
     apt-get install -y python-minimal rsyslog
 
+RUN while touch $(postfix set-permissions 2>&1 | grep -oP "'\K.*(?=')") 2> /dev/null ; do :; done; postfix set-permissions && \
+    rm -rf /usr/share/man/man8/* && rm -rf /usr/share/man/man5/* && rm -rf /usr/share/man/man1/*
+
 RUN postconf -e 'mydestination = $myhostname, localhost.$mydomain, $mydomain' && \
     postconf -e 'myorigin = $mydomain' && \
     postconf -e 'smtp_use_tls = no' && \
@@ -19,10 +22,13 @@ RUN postconf -e 'mydestination = $myhostname, localhost.$mydomain, $mydomain' &&
     postconf -e 'smtp_sasl_security_options = ' && \
     postconf -e 'relay_domains = $mydomain' && \
     postconf -e 'smtpd_tls_security_level = none' && \
+    postconf -e 'local_header_rewrite_clients = permit_mynetworks' && \
+    postconf -e 'undisclosed_recipients_header = To: undisclosed-recipients:;' && \
+    postconf -e 'always_add_missing_headers = yes' && \
     cp /etc/resolv.conf /var/spool/postfix/etc/resolv.conf
 
-RUN while touch $(postfix set-permissions 2>&1 | grep -oP "'\K.*(?=')") 2> /dev/null ; do :; done; postfix set-permissions && \
-    rm -rf /usr/share/man/man8/* && rm -rf /usr/share/man/man5/* && rm -rf /usr/share/man/man1/*
+
+
 
 COPY run.sh /postfix/
 

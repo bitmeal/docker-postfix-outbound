@@ -34,20 +34,17 @@ fi
 
 postconf -e "myhostname = ${MAIL_HOSTNAME}"
 postconf -e "mydomain = ${MAIL_DOMAIN}"
-#postconf -e 'mydestination = $myhostname, localhost.$mydomain, $mydomain'
-#postconf -e 'myorigin = $mydomain'
-#postconf -e 'smtp_use_tls = no'
-#postconf -e 'smtp_sasl_auth_enable = no'
-#postconf -e 'smtp_sasl_security_options = '
-#postconf -e 'relay_domains = $mydomain'
-#postconf -e 'smtpd_tls_security_level = none'
 
 
-#cp /etc/resolv.conf /var/spool/postfix/etc/resolv.conf
+if [ -f /postfix/conf/transport_maps ]; then
+	postconf -e 'transport_maps = pcre:/postfix/conf/transport_maps'
+else
+	postconf -e 'transport_maps = '
+fi
+
 
 # start daemon
 systemctl start rsyslog
-#postfix set-permissions
 postfix start
 
 echo "started postfix"

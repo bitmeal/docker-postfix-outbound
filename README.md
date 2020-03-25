@@ -13,6 +13,11 @@ use following envvars when starting with `--env / -e`:
 * `MAIL_DOMAIN`: defaults to domain set while building container (if set and valid)
 * `MAIL_HOSTNAME`: optional, will be set to `MAIL_DOMAIN` if missing
 
+Mount a directory containing the file `transport_maps`  at `/postfix/conf/` to use the transport_map feature and control valid recipients of your server using regex. Example map allowing sending To, CC and BCC to everybody but `user<+optional_string>@host.com`.
+```
+/^user(\+[^@]+)?@host\.com/ discard:
+/.*/ :
+```
 
 example commandline:
 ```bash
