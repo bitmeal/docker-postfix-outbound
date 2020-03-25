@@ -31,6 +31,7 @@ RUN postconf -e 'mydestination = $myhostname, localhost.$mydomain, $mydomain' &&
 
 
 COPY run.sh /postfix/
+RUN echo "postsuper -d ALL" > /postfix/clearqueue && chmod +x /postfix/clearqueue
 
 
 SHELL ["/bin/bash", "-c"]

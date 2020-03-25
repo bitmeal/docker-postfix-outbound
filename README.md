@@ -1,5 +1,3 @@
-**[probably broken]**
-
 # docker-postfix-outbound
 Simple docker container to use postfix for outbound mail sending. Intended for applications that need to send verification/notification mails, but do not need a full mailserver.
 
@@ -13,11 +11,25 @@ use following envvars when starting with `--env / -e`:
 * `MAIL_DOMAIN`: defaults to domain set while building container (if set and valid)
 * `MAIL_HOSTNAME`: optional, will be set to `MAIL_DOMAIN` if missing
 
-Mount a directory containing the file `transport_maps`  at `/postfix/conf/` to use the transport_map feature and control valid recipients of your server using regex. Example map allowing sending To, CC and BCC to everybody but `user<+optional_string>@host.com`.
+### transport maps
+Mount a directory containing `transport-pcre` or `transport-hash` at `/postfix/conf/` to use the transport_map feature and control valid recipients or relaying of your server. The regular expression mapping in **`transport-pcre` takes precedence** over the `transport-hash`-map.
+
+#### pcre
+Allowing sending To, CC and BCC to everybody but `user<+optional_string>@host.com`:
 ```
 /^user(\+[^@]+)?@host\.com/ discard:
 /.*/ :
 ```
+
+#### hash
+Allowing all `@host.com`, error on `@example.com` and silently discarding all other mails:
+```
+host.com :
+example.com error: No example.com allowed
+* discard:
+```
+
+## run
 
 example commandline:
 ```bash

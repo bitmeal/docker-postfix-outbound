@@ -36,10 +36,18 @@ postconf -e "myhostname = ${MAIL_HOSTNAME}"
 postconf -e "mydomain = ${MAIL_DOMAIN}"
 
 
-if [ -f /postfix/conf/transport_maps ]; then
-	postconf -e 'transport_maps = pcre:/postfix/conf/transport_maps'
+if [ -f /postfix/conf/transport-pcre ]; then
+	echo "found pcre transpor map; applying..."
+	postconf -e 'transport_maps = pcre:/postfix/conf/transport-pcre'
+	postmap /postfix/conf/transport-pcre
 else
-	postconf -e 'transport_maps = '
+	if [ -f /postfix/conf/transport-pcre ]; then
+		echo "found hash transpor map; applying..."
+		postconf -e 'transport_maps = hash:/postfix/conf/transport-hash'
+		postmap /postfix/conf/transport-hash
+	else
+		postconf -e 'transport_maps = '
+	fi
 fi
 
 
@@ -48,6 +56,11 @@ systemctl start rsyslog
 postfix start
 
 echo "started postfix"
+echo "mirroring /var/log/mail.log to stdout and /var/log/mail.err to stderr"
+
+tail -f /var/log/mail.log &
+tail -f /var/log/mail.err 1>&2 &
 
 trap : TERM INT; sleep infinity & wait
+# fallback
 tail -f /dev/null
