@@ -10,7 +10,7 @@ RUN	export DEBIAN_FRONTEND=noninteractive && \
 
 RUN	wget https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl.py -O /usr/local/bin/systemctl && \
     chmod +x /usr/local/bin/systemctl && \
-    apt-get install -y python-minimal
+    apt-get install -y python-minimal rsyslog
 
 RUN postconf -e 'mydestination = $myhostname, localhost.$mydomain, $mydomain' && \
     postconf -e 'myorigin = $mydomain' && \
